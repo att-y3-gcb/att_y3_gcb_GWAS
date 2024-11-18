@@ -191,7 +191,7 @@ We now need to exclude any SNPs that are completely out of Hardy-Weinberg Equili
 
 For disease cases we will use a less stringent threshold, as it possible selection against the disease allele could lead to deviances from HWE. 
 
-- [ ] **Lab Task 4: Create two new objects from genotype_matrix, one for cases and one for controls. (You may need to consult lecture slides)**
+- [ ] **Lab Task 4: Create two new objects from genotype_matrix, one for cases and one for controls. (You may need to consult lecture slides).**
 
 Let’s apply a stringent p-value threshold (1e-5) for the control SNPs as we should expect them all to be roughly in HWE.
 
