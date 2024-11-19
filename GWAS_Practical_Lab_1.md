@@ -302,6 +302,7 @@ population_codes <- read.table("population_file_lab_1.txt", header=TRUE)
 head(population_codes)
 ```
 
+
 Let’s redo our PCA with the merged matrix. We will calculate the first two PCS. We will then add back in the population info to each sample. Our own samples will remain NA so we will label it "my_sample". 
 
 ```
