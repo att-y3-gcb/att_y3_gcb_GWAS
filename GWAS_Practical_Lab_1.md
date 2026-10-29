@@ -44,17 +44,7 @@ check_and_install_packages <- function(packages) {
   }
 }
 
-#Function to calculate Hardy-Weinberg Deviation Statistics
-calculate_hwe <- function(genotypes) {
-    counts <- table(factor(genotypes, levels = c(0, 1, 2)))
-    n <- sum(counts)
-    p <- (2 * counts[1] + counts[2]) / (2 * n)
-    q <- 1 - p
-    expected_counts <- c(n * p^2, 2 * n * p * q, n * q^2)
-    chi_sq <- sum((counts - expected_counts)^2 / expected_counts)
-    p_value <- pchisq(chi_sq, df = 1, lower.tail = FALSE)
-    return(p_value)
-}
+
 
 # Function to calculate Minor Allele Frequencies (MAF)
 calculate_maf <- function(genotypes) {
@@ -187,34 +177,9 @@ We will remove variants below a 5% frequency threshold:
 genetic_matrix_5 <- genetic_matrix_4[, c(1:6, which(maf_values >= 0.05) + 6)]
 ```
 
-We now need to exclude any SNPs that are completely out of Hardy-Weinberg Equilibrium (HWE), as measured by a Chi-squared test. If a SNP is out of equilibrium it could suggest a genotyping error. 
-
-For disease cases we will use a less stringent threshold, as it possible selection against the disease allele could lead to deviances from HWE. 
-
-- [ ] **Lab Task 4: Create two new objects from genotype_matrix, one for cases and one for controls. (You may need to consult lecture slides).**
-
-Let’s apply a stringent p-value threshold (1e-5) for the control SNPs as we should expect them all to be roughly in HWE.
-
-```
-hwe_p_values_controls <- apply(controls[, 7:ncol(controls)], 2, calculate_hwe)
-head(hwe_p_values_controls)
-genetic_matrix_6 <- genetic_matrix_5[, c(1:6, which(hwe_p_values_controls >= 1e-5) + 6)]
-```
-
-How many SNPs were removed?
-
-Let’s now apply a less stringent p-value threshold for cases and controls together (1e-10)
-
-```
-hwe_p_values_all <- apply(genetic_matrix_6[, 7:ncol(genetic_matrix_6)], 2, calculate_hwe)
-genetic_matrix_7 <- genetic_matrix_6[, c(1:6, which(hwe_p_values_all >= 1e-10) + 6)]
-```
-
-How many SNPs were removed?
-
 Before, we move onto the princicpal component analysis. Let us take a look at how many SNPs and Individuals were removed during our QC processes. 
 
-- [ ] **Lab Task 5: Calculate how many SNPs and Individuals were removed across all QC steps**
+- [ ] **Lab Task 4: Calculate how many SNPs and Individuals were removed across all QC steps**
 
 We now need to perform PCA on our genotype matrix. This transformation will find the vectors (PCs) that explain the most variation across the entire matrix. 
 
@@ -229,7 +194,7 @@ This is an image of what a typical PCA plot of mixed populations might look like
 <br><br>We won’t need anything other than the SNP columns for PCA. For simplicity, we will also replace any NA genotype values with the mean value of the corresponsing value (using a pre-built function). 
 
 ```
-snp_matrix <- apply(genetic_matrix_7[,7:ncol(genetic_matrix_7)], 2, replace_na_with_mean)
+snp_matrix <- apply(genetic_matrix_5[,7:ncol(genetic_matrix_5)], 2, replace_na_with_mean)
 ```
 
 Now let us perform the PCA using the prcomp function. We will calculate the first 2 principal components. 
@@ -237,7 +202,7 @@ Now let us perform the PCA using the prcomp function. We will calculate the firs
 ```
 pca_result <- prcomp(snp_matrix, center=TRUE, scale.=TRUE,rank.=2)
 pca_scores <- as.data.frame(pca_result$x)
-pca_scores$IID <- genetic_matrix_7$IID
+pca_scores$IID <- genetic_matrix_5$IID
 head(pca_scores)
 ```
 
@@ -263,10 +228,10 @@ Are you surprised by this result? Feel free to discuss with your demonstrator.
 
 Let's remove the outlier(s). 
 ```
-genetic_matrix_8 <- genetic_matrix_7[-pc1_outliers,]
+genetic_matrix_6 <- genetic_matrix_5[-pc1_outliers,]
 ```
 
-- [ ] **Lab Task 6: Remove all outliers on the PC2 axis, if any.**
+- [ ] **Lab Task 5: Remove all outliers on the PC2 axis, if any.**
 
 
 Let us see where these samples fall on a global sample by using labelled data from the 1000 Genomes project. 
@@ -281,15 +246,15 @@ dim(global_matrix)
 Before merging, we must be sure to make sure the two matrices share the same SNPs.
 
 ```
-shared_columns <- intersect(colnames(genetic_matrix_8), colnames(global_matrix))
+shared_columns <- intersect(colnames(genetic_matrix_6), colnames(global_matrix))
 ```
 
 We will subset both matrices to keep only the shared columns. Then we will merge them together. 
 
 ```
-genetic_matrix_8_subset <- genetic_matrix_8[, shared_columns]
+genetic_matrix_6_subset <- genetic_matrix_6[, shared_columns]
 global_matrix <- global_matrix[, shared_columns]
-merged_matrix <- merge(genetic_matrix_8_subset, global_matrix, by = shared_columns, all = TRUE)
+merged_matrix <- merge(genetic_matrix_6_subset, global_matrix, by = shared_columns, all = TRUE)
 dim(merged_matrix)
 ```
 
