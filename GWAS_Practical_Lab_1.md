@@ -295,5 +295,5 @@ theme_minimal() +
 theme(legend.title=element_blank())
 ```
 
-- [ ] **Lab Task 7: Do the samples fall broadly where we expect them to in PC-space?**
+- [ ] **Lab Task 6: Do the samples fall broadly where we expect them to in PC-space?**
 #
