@@ -27,6 +27,22 @@ Ask your demonstrator for help if you run into issues getting into the directory
 First, we must define some functions that we will be using:
 
 ```
+# Function to check, install, and load packages
+check_and_install_packages <- function(packages) {
+  # Loop over the list of packages
+  for (pkg in packages) {
+    # Check if the package is installed
+    if (!require(pkg, character.only = TRUE)) {
+      # If not installed, install the package
+      install.packages(pkg, dependencies = TRUE)
+      # Load the package
+      library(pkg, character.only = TRUE)
+    } else {
+      # If already installed, just load it
+      library(pkg, character.only = TRUE)
+    }
+  }
+}
 
 # Function to calculate Minor Allele Frequencies (MAF)
 calculate_maf <- function(genotypes) {
@@ -48,18 +64,8 @@ replace_na_with_mean <- function(x) {
 Now, we will install and load the relevant packages:
 
 ```
-install.packages("remotes")
-
-remotes::install_version("ggplot2",    version = "4.0.3")
-remotes::install_version("dplyr",      version = "1.2.1")
-remotes::install_version("qqman",      version = "0.1.9")
-remotes::install_version("rcompanion", version = "2.4.36")
-
-library(ggplot2)
-library(dplyr)
-library(qqman)
-library(rcompanion)
-
+required_packages <- c("ggplot2", "dplyr", "qqman", "rcompanion")
+check_and_install_packages(required_packages)
 options(scipen=999) #formatting command to prevent the use of E-notation. 
 ```
 
