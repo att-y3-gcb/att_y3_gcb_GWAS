@@ -20,33 +20,14 @@ setwd("C:/Users/johndoe/Downloads")
 
 Ask your demonstrator for help if you run into issues getting into the directory your files are saved to. 
 
-First, we must define some functions that we will be using:
-
-```
-# Function to check, install, and load packages
-check_and_install_packages <- function(packages) {
-  # Loop over the list of packages
-  for (pkg in packages) {
-    # Check if the package is installed
-    if (!require(pkg, character.only = TRUE)) {
-      # If not installed, install the package
-      install.packages(pkg, dependencies = TRUE)
-      # Load the package
-      library(pkg, character.only = TRUE)
-    } else {
-      # If already installed, just load it
-      library(pkg, character.only = TRUE)
-    }
-  }
-}
-```
 
 Now, we will load (and install if needed) the relevant packages:
 
 ```
-required_packages <- c("ggplot2", "dplyr", "qqman", "rcompanion")
-check_and_install_packages(required_packages)
-options(scipen=999) #formatting command to prevent the use of E-notation. 
+library(ggplot2)
+library(dplyr)
+library(qqman)
+library(rcompanion)
 ```
 
 As a first step, we will load our post-QC genetic_matrix (this was our genetic_matrix_6 object from the previous practical.): 
